@@ -1,8 +1,18 @@
-name: dbt build
+name: dbt build and docs
 
 on:
   push:
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -17,3 +27,21 @@ jobs:
       - run: dbt deps --profiles-dir .
       - run: dbt build --profiles-dir .
       - run: dbt docs generate --profiles-dir .
+      - name: Prepare docs site
+        run: |
+          mkdir -p site
+          cp target/index.html target/manifest.json target/catalog.json site/
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
