@@ -11,6 +11,18 @@ and the numbers never matched. Meetings started with "which number is right?" in
 Which suppliers enter the **supplier development plan** (OTIF below 85% for two months in a row),
 and whether the **new onboarding program** is worth keeping.
 
+## Lineage
+Four raw sources, one trusted metric.
+
+![Lineage: raw sources to supplier_scorecard](docs/lineage.png)
+
+<details>
+<summary>Full project graph (tests, snapshot and A/B analysis)</summary>
+
+![Full lineage](docs/lineage_full.png)
+
+</details>
+
 ## What's inside
 | Layer | Models | Purpose |
 |---|---|---|
