@@ -39,7 +39,7 @@ dbt docs generate --profiles-dir . && dbt docs serve --profiles-dir .
 CI runs `dbt build` on every push (GitHub Actions).
 
 ## How AI was used
-I used Claude to draft and review models, tests and documentation, then validated every
+I used AWS Quick to draft and review models, tests and documentation, then validated every
 model against the data and the business rules. AI speeds up the writing; the definitions
 and the checks are mine.
 
