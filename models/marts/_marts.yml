@@ -1,0 +1,56 @@
+version: 2
+
+models:
+  - name: dim_suppliers
+    description: Supplier dimension. One row per supplier.
+    columns:
+      - name: supplier_id
+        data_tests: [unique, not_null]
+
+  - name: fct_deliveries
+    description: >
+      One row per delivery. OTIF definition (agreed with Procurement, Planning and Quality):
+      a delivery is OTIF when it arrives on or before the promised date AND with at least
+      the ordered quantity. Deliveries with missing quantity count as NOT in full.
+    columns:
+      - name: delivery_id
+        data_tests: [unique, not_null]
+      - name: supplier_id
+        data_tests:
+          - relationships:
+              to: ref('dim_suppliers')
+              field: supplier_id
+      - name: is_otif
+        description: True when is_on_time and is_in_full.
+        data_tests: [not_null]
+      - name: lead_time_days
+        description: Days from order to delivery.
+    meta:
+      metrics:
+        otif_rate:
+          type: average
+          sql: case when ${is_otif} then 1 else 0 end
+          description: Share of deliveries on time and in full.
+
+  - name: supplier_scorecard
+    description: >
+      Monthly supplier scorecard. Use this table, not ad-hoc spreadsheets, for any OTIF number.
+      Decision it drives: which suppliers enter the development plan (OTIF < 85% for 2 months).
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: [supplier_id, delivery_month]
+    columns:
+      - name: otif_rate
+        description: Share of deliveries on time and in full (0 to 1).
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+        meta:
+          dimension:
+            format: percent
+      - name: defect_rate
+        description: Rejected quantity / delivered quantity.
+      - name: spend
+        description: Value of the orders delivered in the month.

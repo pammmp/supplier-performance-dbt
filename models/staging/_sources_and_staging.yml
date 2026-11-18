@@ -1,0 +1,49 @@
+version: 2
+
+models:
+  - name: stg_suppliers
+    description: One row per supplier. Names trimmed and standardized, dates parsed.
+    columns:
+      - name: supplier_id
+        description: Supplier natural key.
+        data_tests: [unique, not_null]
+      - name: category
+        data_tests:
+          - accepted_values:
+              values: ["resins", "pigments", "packaging", "metal_parts", "molds_services"]
+      - name: onboarding_program
+        description: "'new' = onboarding program launched in Jul/2025; 'legacy' = previous process."
+        data_tests:
+          - accepted_values:
+              values: ["new", "legacy"]
+
+  - name: stg_purchase_orders
+    description: One row per purchase order.
+    columns:
+      - name: po_id
+        data_tests: [unique, not_null]
+      - name: supplier_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('stg_suppliers')
+              field: supplier_id
+      - name: promised_date
+        data_tests: [not_null]
+
+  - name: stg_deliveries
+    description: One row per delivery. Exact duplicates from the source are removed here.
+    columns:
+      - name: delivery_id
+        data_tests: [unique, not_null]
+      - name: po_id
+        data_tests:
+          - relationships:
+              to: ref('stg_purchase_orders')
+              field: po_id
+
+  - name: stg_inspections
+    description: Quality inspection per delivery.
+    columns:
+      - name: inspection_id
+        data_tests: [unique, not_null]

@@ -1,0 +1,19 @@
+name: dbt build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - run: python scripts/generate_data.py
+      - run: dbt deps --profiles-dir .
+      - run: dbt build --profiles-dir .
+      - run: dbt docs generate --profiles-dir .

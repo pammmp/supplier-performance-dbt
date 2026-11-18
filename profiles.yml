@@ -1,0 +1,8 @@
+# Local profile: DuckDB file in the project folder. Used by CI too.
+supplier_performance:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: supplier_performance.duckdb
+      threads: 4
