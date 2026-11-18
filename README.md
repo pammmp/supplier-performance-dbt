@@ -50,6 +50,26 @@ dbt docs generate --profiles-dir . && dbt docs serve --profiles-dir .
 ```
 CI runs `dbt build` on every push (GitHub Actions).
 
+## Findings
+**Did the new onboarding program improve supplier OTIF?** Not conclusively.
+
+| Group | First-90-day OTIF |
+|---|---|
+| New onboarding | 81.4% |
+| Legacy onboarding | 79.3% |
+| **Lift** | **+2.1 pts** |
+
+- **z-score: 0.35**, far below the 1.96 needed for 95% confidence. The lift may be noise.
+- Suppliers were **not randomized** between programs, so even a significant result would be a signal, not proof.
+
+**Recommendation:** don't scale the new onboarding based on this data. Run a randomized
+test for one more quarter, then decide.
+
+> Why this matters: a positive-looking number isn't a decision. Knowing when the evidence
+> isn't strong enough is as useful as finding a real effect.
+
+*Data is fictional, so the numbers illustrate the method, not a real company.*
+
 ## How AI was used
 I used AWS Quick to draft and review models, tests and documentation, then validated every
 model against the data and the business rules. AI speeds up the writing; the definitions
